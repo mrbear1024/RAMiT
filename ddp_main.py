@@ -29,7 +29,9 @@ def get_args_parser():
     parser.add_argument('--patch_load', action='store_true', help='random cropped patch load from pre-defined file')
     parser.add_argument('--task', type=str, default='lightweight_sr', help='lightweight_sr, lightweight_dn')
     # training data
-    parser.add_argument('--data_name', type=str, default='DIV2K', help='training dataset. DIV2K, DFBW, LLE, DR, DF2K')
+    parser.add_argument('--data_name', type=str, default='DIV2K', help='training dataset. DIV2K, DFBW, LLE, DR, DF2K, CBCT')
+    parser.add_argument('--cbct_train_root', type=str, default='datasets_npy', help='CBCT train root containing HQ/ and LQ/')
+    parser.add_argument('--cbct_test_root', type=str, default='datasets_npy', help='CBCT test root containing HQ/ and LQ/')
     parser.add_argument('--training_patch_size', type=str2tuple, default=(64,), help='LQ image patch size. model input patch size only for training. For DN, LLE, DR use (64,96,128)')
     # model type
     parser.add_argument('--model_name', type=str, default='RAMiT', help='model name to use. RAMiT, RAMiT-1, RAMiT-slimSR, RAMiT-LLE')

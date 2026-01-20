@@ -1,6 +1,7 @@
-from dataset import DIV2KDatasetRandomCrop, DF2KDatasetRandomCrop, DFBWDatasetRandomCrop, LLEDatasetRandomCrop, DRDatasetRandomCrop
+from dataset import DIV2KDatasetRandomCrop, DF2KDatasetRandomCrop, DFBWDatasetRandomCrop, LLEDatasetRandomCrop, DRDatasetRandomCrop, CBCTGrayDenoiseDatasetRandomCrop
 from torch.utils.data import DataLoader, DistributedSampler
 from importlib import import_module
+from pathlib import Path
 from utils.train_utils import param_groups_lrd, NativeScalerWithGradNormCount, CharbonnierLoss
 import torch
 import torch.nn as nn
@@ -23,6 +24,10 @@ def build_dataset(rank, ps, bs, args):
         if args.data_name == 'DFBW':
             train_data = DFBWDatasetRandomCrop('../DIV2K/DIV2K_train_HR', '../Flickr2K/Flickr2K_HR',
                                                '../BSDS500/HQ', '../WED/HQ', ps, args.sigma, gray, args.model_time, args.patch_load)
+        elif args.data_name == 'CBCT':
+            cbct_root = Path(getattr(args, 'cbct_train_root', 'datasets_npy'))
+            train_data = CBCTGrayDenoiseDatasetRandomCrop(cbct_root / 'HQ', cbct_root / 'LQ',
+                                                          ps, args.model_time, args.patch_load, True)
         elif args.data_name == 'LLE':
             train_data = LLEDatasetRandomCrop('../LOL/HQ', '../VELOL/HQ', '../LOL/LQ', '../VELOL/LQ', 
                                               ps, args.model_time, args.patch_load)

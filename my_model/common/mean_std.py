@@ -15,8 +15,8 @@ def mean_std(scale, target_mode):
         mean = (0.0000, 0.0000, 0.0000)
         std = (1.0000, 1.0000, 1.0000)
     elif target_mode=='light_graydn': # image normalization with statistics from HQ sets
-        mean = (0.4539,)
-        std = (0.2326,)
+        mean = (0.00790442,)
+        std = (0.01071892,)
     elif target_mode=='light_lle':
         mean = (0.1687, 0.1599, 0.1526)
         std = (0.1142, 0.1094, 0.1094)
