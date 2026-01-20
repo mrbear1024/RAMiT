@@ -205,13 +205,14 @@ python3 convert_cbct_pkl_to_npy.py --in-dir _raw_datasets --out-dir datasets_npy
 
 并行转换：
 ```
-python3 convert_pkl_to_npy_parallel.py --in-root _raw_datasets --out-root datasets_npy
+python3 convert_cbct_pkl_to_npy_parallel.py --in-dir _raw_datasets --out-dir datasets_npy --workers 8
 ```
 后台运行：
 ```
-nohup python3 convert_pkl_to_npy_parallel.py \
-  --in-root _raw_datasets \
-  --out-root datasets_npy \
+nohup python3 convert_cbct_pkl_to_npy_parallel.py \
+  --in-dir _raw_datasets \
+  --out-dir datasets_npy \
+  --workers 8 \
   > convert.log 2>&1 &
 ```
 两个脚本都支持 `--overwrite` 用于重建已有的 `.npy` 文件。
