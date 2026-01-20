@@ -207,7 +207,13 @@ python3 convert_cbct_pkl_to_npy.py --in-dir _raw_datasets --out-dir datasets_npy
 ```
 python3 convert_pkl_to_npy_parallel.py --in-root _raw_datasets --out-root datasets_npy
 ```
-
+后台运行：
+```
+nohup python3 convert_pkl_to_npy_parallel.py \
+  --in-root _raw_datasets \
+  --out-root datasets_npy \
+  > convert.log 2>&1 &
+```
 两个脚本都支持 `--overwrite` 用于重建已有的 `.npy` 文件。
 
 ### CBCT 训练（灰度去噪）

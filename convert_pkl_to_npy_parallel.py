@@ -24,6 +24,16 @@ def _default_out_root(in_root: Path) -> Path:
     return in_root.parent / f"{in_root.name}_npy"
 
 
+def _resolve_in_root(path: Path) -> Path:
+    if path.exists():
+        return path.absolute()
+    alt_path = Path(str(path).replace("/autodl-fs/data", "/autodl-fs", 1))
+    if alt_path != path and alt_path.exists():
+        print(f"Input root not found: {path}. Using: {alt_path}")
+        return alt_path.absolute()
+    return path
+
+
 def _normalize_split_name(name: str) -> str:
     if name == "valiadation_set":
         return "validation_set"
@@ -128,11 +138,14 @@ def _convert_one(
 
 def main() -> int:
     args = _parse_args()
-    in_root = Path(args.in_root).expanduser().resolve()
-    out_root = Path(args.out_root).expanduser().resolve() if args.out_root else _default_out_root(in_root)
-
+    in_root = _resolve_in_root(Path(args.in_root).expanduser())
     if not in_root.exists():
         raise SystemExit(f"Input root not found: {in_root}")
+    out_root = (
+        Path(args.out_root).expanduser().resolve()
+        if args.out_root
+        else _default_out_root(in_root)
+    )
 
     pkl_files = sorted(set(in_root.rglob("*.pkl")) | set(in_root.rglob("*.pickle")))
     if not pkl_files:
