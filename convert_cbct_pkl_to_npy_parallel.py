@@ -136,7 +136,7 @@ def _iter_pickle_paths(root: Path):
 
 
 def _list_split_dirs(root: Path):
-    split_names = {"training_set", "validation_set", "valiadation_set", "test_set"}
+    split_names = {"training_set", "validation_set",  "test_set"}
     if root.name in split_names:
         return [root]
     split_dirs = []

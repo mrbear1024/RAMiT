@@ -190,9 +190,11 @@ def test_one_epoch(rank, gpu, model, epoch, args, opts):
             if not pair_list:
                 continue
             imgname_maxlen = max([len(str(p[0].relative_to(hq_root))) for p in pair_list])
+            total_items = len(pair_list)
         else:
             path_list = sorted(glob.glob(os.path.join(folder_hq, '*.npy')))
             imgname_maxlen = max([len(os.path.splitext(os.path.basename(p))[0]) for p in path_list])
+            total_items = len(path_list)
         
         for degrade in test_degrade:
             for data_iter, path in enumerate(tqdm(pair_list if cbct_mode else path_list)):
@@ -293,7 +295,7 @@ def test_one_epoch(rank, gpu, model, epoch, args, opts):
                         f.writelines(f'PSNR_Y: {psnr_y:.2f}, SSIM_Y: {ssim_y:.4f}\n')
                     elif args.task in ['lightweight_dn', 'lightweight_lle']:
                         f.writelines(f'PSNR: {psnr:.2f}, SSIM: {ssim:.4f}\n')
-                    if data_iter+1 == len(path_list): f.writelines('\n')
+                    if data_iter+1 == total_items: f.writelines('\n')
 
             # summarize psnr/ssim
             with open(f'./logs/{args.model_time}_test{deg}.txt', 'a') as f:
