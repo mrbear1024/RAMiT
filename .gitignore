@@ -1,4 +1,5 @@
 generative_docs
 datasets/
 datasets_npy/
+_raw_datasets/
 .DS_Store
