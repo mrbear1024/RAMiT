@@ -193,6 +193,51 @@ python3 ddp_main_test.py --total_nodes 1 --gpus_per_node 1 --node_rank 0 --ip_ad
 
 Please properly edit the first five arguments to work on your devices.
 
+### CBCT Pickle -> NPY 转换
+
+如果你的 CBCT 原始数据在 `_raw_datasets` 下（`.pkl/.pickle`），可以转换为 `.npy`，
+并保持目录结构镜像到 `datasets_npy`。
+
+单进程转换：
+```
+python3 convert_cbct_pkl_to_npy.py --in-dir _raw_datasets --out-dir datasets_npy
+```
+
+并行转换：
+```
+python3 convert_pkl_to_npy_parallel.py --in-root _raw_datasets --out-root datasets_npy
+```
+
+两个脚本都支持 `--overwrite` 用于重建已有的 `.npy` 文件。
+
+### CBCT 训练（灰度去噪）
+
+CBCT 数据集目录结构应为：
+```
+datasets_npy/
+  HQ/{training_set,validation_set,test_set}/...
+  LQ/{training_set,validation_set,test_set}/...
+```
+
+训练命令（默认启用 validation）：
+```
+python3 ddp_main.py --total_nodes 1 --gpus_per_node 1 --node_rank 0 --ip_address [ip address] \
+  --backend gloo --model_name RAMiT --task lightweight_dn --target_mode light_graydn \
+  --data_name CBCT --cbct_train_root datasets_npy --cbct_train_split training_set \
+  --cbct_test_root datasets_npy --cbct_test_split validation_set --test_epoch 20
+```
+
+如需训练时关闭验证，可将 `--test_epoch` 设为较大值（例如 9999）。
+
+后台运行示例（输出日志到 `train_cbct.log`）：
+```
+nohup python3 ddp_main.py --total_nodes 1 --gpus_per_node 1 --node_rank 0 --ip_address [ip address] \
+  --backend gloo --model_name RAMiT --task lightweight_dn --target_mode light_graydn \
+  --data_name CBCT --cbct_train_root datasets_npy --cbct_train_split training_set \
+  --cbct_test_root datasets_npy --cbct_test_split validation_set --test_epoch 20 \
+  > train_cbct.log 2>&1 &
+```
+
 ##### RAMiT SR
 ```
 (x2) from scratch

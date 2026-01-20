@@ -11,8 +11,11 @@ def _parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--root",
-        default="datasets_npy/HQ",
-        help="Root directory containing CBCT .npy files (default: datasets_npy/HQ)",
+        default="datasets_npy/HQ/training_set",
+        help=(
+            "Root directory containing CBCT .npy files "
+            "(default: datasets_npy/HQ/training_set)"
+        ),
     )
     parser.add_argument(
         "--recursive",

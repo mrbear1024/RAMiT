@@ -165,8 +165,12 @@ def test_one_epoch(rank, gpu, model, epoch, args, opts):
 
         if cbct_mode:
             cbct_root = Path(getattr(args, 'cbct_test_root', 'datasets_npy'))
-            hq_root = cbct_root / 'HQ'
-            lq_root = cbct_root / 'LQ'
+            cbct_split = getattr(args, 'cbct_test_split', 'test_set')
+            hq_root = cbct_root / 'HQ' / cbct_split
+            lq_root = cbct_root / 'LQ' / cbct_split
+            if not hq_root.exists() or not lq_root.exists():
+                hq_root = cbct_root / 'HQ'
+                lq_root = cbct_root / 'LQ'
             hq_paths = sorted(hq_root.rglob('*.npy'))
             lq_paths = sorted(lq_root.rglob('*.npy'))
             hq_map = {p.relative_to(hq_root): p for p in hq_paths}

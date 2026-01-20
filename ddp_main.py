@@ -31,7 +31,9 @@ def get_args_parser():
     # training data
     parser.add_argument('--data_name', type=str, default='DIV2K', help='training dataset. DIV2K, DFBW, LLE, DR, DF2K, CBCT')
     parser.add_argument('--cbct_train_root', type=str, default='datasets_npy', help='CBCT train root containing HQ/ and LQ/')
+    parser.add_argument('--cbct_train_split', type=str, default='training_set', help='CBCT train split folder name')
     parser.add_argument('--cbct_test_root', type=str, default='datasets_npy', help='CBCT test root containing HQ/ and LQ/')
+    parser.add_argument('--cbct_test_split', type=str, default='validation_set', help='CBCT test split folder name')
     parser.add_argument('--training_patch_size', type=str2tuple, default=(64,), help='LQ image patch size. model input patch size only for training. For DN, LLE, DR use (64,96,128)')
     # model type
     parser.add_argument('--model_name', type=str, default='RAMiT', help='model name to use. RAMiT, RAMiT-1, RAMiT-slimSR, RAMiT-LLE')
@@ -121,6 +123,9 @@ if __name__ == '__main__':
     os.makedirs(f'./logs/', exist_ok=True)
     parser = get_args_parser()
     args = parser.parse_args()
+    if args.data_name == 'CBCT' and args.target_mode == 'light_graydn' and args.img_norm:
+        print("CBCT graydn uses raw values; disabling --img_norm.")
+        args.img_norm = False
     opts = opt_parser(args)
     
     args.scale = int(args.target_mode[-1]) if args.target_mode[-1].isdigit() else 1

@@ -23,6 +23,7 @@ def get_args_parser():
     parser.add_argument('--task', type=str, default='lightweight_sr', help='lightweight_sr, lightweight_dn')
     parser.add_argument('--data_name', type=str, default=None, help='training dataset name if needed for testing (e.g., CBCT)')
     parser.add_argument('--cbct_test_root', type=str, default='datasets_npy', help='CBCT test root containing HQ/ and LQ/')
+    parser.add_argument('--cbct_test_split', type=str, default='test_set', help='CBCT test split folder name')
     parser.add_argument('--target_mode', type=str, default='light_x2', help='light_x2, light_x3, light_x4, light_dn, light_dn, light_graydn, light_lle, light_dr')
     parser.add_argument('--scale', type=int, help="upscale factor corresponding to 'target_mode'. it is automatically set.")
     parser.add_argument('--sigma', type=str2tuple, help='only for denosing tasks')
@@ -48,6 +49,9 @@ if __name__ == '__main__':
     os.makedirs(f'./logs/', exist_ok=True)
     parser = get_args_parser()
     args = parser.parse_args()
+    if args.data_name == 'CBCT' and args.target_mode == 'light_graydn' and args.img_norm:
+        print("CBCT graydn uses raw values; disabling --img_norm.")
+        args.img_norm = False
     opts = opt_parser(args)
     
     args.model_time = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')

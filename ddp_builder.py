@@ -9,6 +9,14 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from collections import OrderedDict
 from timm.models.layers import _assert
 
+
+def _resolve_cbct_split(root: Path, split: str):
+    hq_split = root / 'HQ' / split
+    lq_split = root / 'LQ' / split
+    if hq_split.exists() and lq_split.exists():
+        return hq_split, lq_split
+    return root / 'HQ', root / 'LQ'
+
 def build_dataset(rank, ps, bs, args):
     if args.target_mode[-1].isdigit():
         if args.data_name == 'DIV2K':
@@ -26,7 +34,9 @@ def build_dataset(rank, ps, bs, args):
                                                '../BSDS500/HQ', '../WED/HQ', ps, args.sigma, gray, args.model_time, args.patch_load)
         elif args.data_name == 'CBCT':
             cbct_root = Path(getattr(args, 'cbct_train_root', 'datasets_npy'))
-            train_data = CBCTGrayDenoiseDatasetRandomCrop(cbct_root / 'HQ', cbct_root / 'LQ',
+            cbct_split = getattr(args, 'cbct_train_split', 'training_set')
+            hq_root, lq_root = _resolve_cbct_split(cbct_root, cbct_split)
+            train_data = CBCTGrayDenoiseDatasetRandomCrop(hq_root, lq_root,
                                                           ps, args.model_time, args.patch_load, True)
         elif args.data_name == 'LLE':
             train_data = LLEDatasetRandomCrop('../LOL/HQ', '../VELOL/HQ', '../LOL/LQ', '../VELOL/LQ', 
